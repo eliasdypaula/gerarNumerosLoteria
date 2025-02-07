@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Seleção de Números</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+            background-color: #f4f4f9; /* Cor de fundo suave */
+            color: #333; /* Cor do texto */
+        }
+
+        h1, h3 {
+            text-align: center;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            grid-gap: 10px;
+            justify-items: center;
+            margin-bottom: 20px;
+        }
+
+        .number {
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: lightgray;
+            border-radius: 5px;
+            font-size: 18px;
+            cursor: pointer;
+        }
+
+        .selected {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        .input-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 20px;
+        }
+
+        .generate-button {
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .generate-button:hover {
+            background-color: #45a049;
+        }
+
+        .game-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 20px;
+        }
+
+        .game {
+            display: flex;
+            justify-content: center;
+            margin: 10px 0;
+        }
+
+        .game .number {
+            background-color: #f44336;
+            color: white;
+        }
+
+        .number-container {
+            display: grid;
+            grid-template-columns: repeat(6, 50px);
+            grid-gap: 10px;
+            justify-content: center;
+        }
+
+        /* Responsividade */
+        @media (max-width: 768px) {
+            .grid {
+                grid-template-columns: repeat(5, 1fr);
+            }
+
+            .number {
+                width: 40px;
+                height: 40px;
+                font-size: 14px;
+            }
+
+            .generate-button {
+                padding: 8px;
+                font-size: 14px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+
+            .number {
+                width: 35px;
+                height: 35px;
+                font-size: 12px;
+            }
+
+            .generate-button {
+                padding: 6px;
+                font-size: 12px;
+            }
+        }
+
+        /* Rodapé */
+        footer {
+            text-align: center;
+            margin-top: 30px;
+            padding: 20px;
+            background-color: #333;
+            color: white;
+            font-size: 14px;
+        }
+
+    </style>
+</head>
+<body>
+    <h1>Selecione os números</h1>
+    <div class="grid" id="grid"></div>
+
+    <!-- Input e botão abaixo dos números -->
+    <div class="input-container">
+        <label for="quantidade">Quantidade de jogos:</label>
+        <input type="number" id="quantidade" min="1" placeholder="Digite a quantidade de jogos">
+        <button class="generate-button" onclick="generateGames()">Gerar Jogos</button>
+    </div>
+
+    <h3>Números Selecionados:</h3>
+    <pre id="selectedNumbers">[]</pre>
+    
+    <h3>Jogos Gerados:</h3>
+    <div id="gamesContainer" class="game-container"></div>
+
+    <script>
+        // Array para armazenar os números selecionados
+        let selectedNumbers = [];
+
+        // Função para criar a grade de números de 1 a 60
+        function createGrid() {
+            const gridContainer = document.getElementById('grid');
+
+            for (let i = 1; i <= 60; i++) {
+                // Criar elemento de número
+                const numberElement = document.createElement('div');
+                numberElement.classList.add('number');
+                numberElement.textContent = i;
+
+                // Adicionar evento de clique
+                numberElement.addEventListener('click', () => toggleNumberSelection(i, numberElement));
+
+                // Adicionar o número à grade
+                gridContainer.appendChild(numberElement);
+            }
+        }
+
+        // Função para alternar a seleção do número
+        function toggleNumberSelection(number, element) {
+            const index = selectedNumbers.indexOf(number);
+
+            if (index === -1) {
+                // Número não está selecionado, então adiciona ao array e muda a cor
+                selectedNumbers.push(number);
+                element.classList.add('selected');
+            } else {
+                // Número já está selecionado, então remove do array e remove a cor
+                selectedNumbers.splice(index, 1);
+                element.classList.remove('selected');
+            }
+
+            // Atualiza a exibição dos números selecionados
+            document.getElementById('selectedNumbers').textContent = JSON.stringify(selectedNumbers);
+        }
+
+        // Função para gerar os jogos com números aleatórios
+        function generateGames() {
+            const quantidade = parseInt(document.getElementById('quantidade').value);
+            const gamesContainer = document.getElementById('gamesContainer');
+            gamesContainer.innerHTML = ''; // Limpar jogos anteriores
+
+            if (quantidade > 0) {
+                for (let i = 0; i < quantidade; i++) {
+                    const game = generateRandomGame();
+                    const gameElement = document.createElement('div');
+                    gameElement.classList.add('game');
+
+                    const gameNumbersContainer = document.createElement('div');
+                    gameNumbersContainer.classList.add('number-container');
+
+                    // Adicionando números em ordem crescente
+                    game.sort((a, b) => a - b);  // Ordenando os números de forma crescente
+
+                    game.forEach(num => {
+                        const numberElement = document.createElement('div');
+                        numberElement.classList.add('number');
+                        numberElement.textContent = num;
+                        gameNumbersContainer.appendChild(numberElement);
+                    });
+
+                    gameElement.appendChild(gameNumbersContainer);
+                    gamesContainer.appendChild(gameElement);
+                }
+            }
+        }
+
+        // Função para gerar um jogo aleatório com 6 números
+        function generateRandomGame() {
+            const game = [];
+            const tempNumbers = [...selectedNumbers];
+            const numberOfNumbers = 6;
+
+            for (let i = 0; i < numberOfNumbers; i++) {
+                const randomIndex = Math.floor(Math.random() * tempNumbers.length);
+                game.push(tempNumbers[randomIndex]);
+                tempNumbers.splice(randomIndex, 1); // Remover o número escolhido para evitar repetição
+            }
+
+            return game;
+        }
+
+        // Chamar a função para criar a grade
+        createGrid();
+    </script>
+
+    <!-- Rodapé -->
+    <footer>
+        Feito para o Paquito pelo grandão
+    </footer>
+</body>
+</html>
