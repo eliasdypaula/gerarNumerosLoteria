@@ -20,7 +20,7 @@
 
         .grid {
             display: grid;
-            grid-template-columns: repeat(6, 1fr);
+            grid-template-columns: repeat(6, 1fr); /* Inicialmente 6 colunas */
             grid-gap: 10px;
             justify-items: center;
             margin-bottom: 20px;
@@ -89,8 +89,8 @@
             justify-content: center;
         }
 
-        /* Responsividade */
-        @media (max-width: 768px) {
+        /* Responsividade para telas menores */
+        @media (max-width: 1024px) {
             .grid {
                 grid-template-columns: repeat(5, 1fr);
             }
@@ -107,7 +107,7 @@
             }
         }
 
-        @media (max-width: 480px) {
+        @media (max-width: 768px) {
             .grid {
                 grid-template-columns: repeat(4, 1fr);
             }
@@ -124,6 +124,23 @@
             }
         }
 
+        @media (max-width: 480px) {
+            .grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+
+            .number {
+                width: 30px;
+                height: 30px;
+                font-size: 10px;
+            }
+
+            .generate-button {
+                padding: 4px;
+                font-size: 10px;
+            }
+        }
+
         /* Rodapé */
         footer {
             text-align: center;
@@ -133,6 +150,11 @@
             color: white;
             font-size: 14px;
         }
+		
+		.selectedNumbers {
+			padding: 40px;
+			width: 100%;
+		}
 
     </style>
 </head>
@@ -147,9 +169,10 @@
         <button class="generate-button" onclick="generateGames()">Gerar Jogos</button>
     </div>
 
+<!--
     <h3>Números Selecionados:</h3>
     <pre id="selectedNumbers">[]</pre>
-    
+ -->
     <h3>Jogos Gerados:</h3>
     <div id="gamesContainer" class="game-container"></div>
 
